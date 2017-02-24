@@ -21,6 +21,7 @@ import (
 	"k8s.io/heapster/events/core"
 	"k8s.io/heapster/events/sinks/elasticsearch"
 	"k8s.io/heapster/events/sinks/gcl"
+	"k8s.io/heapster/events/sinks/honeycomb"
 	"k8s.io/heapster/events/sinks/influxdb"
 	"k8s.io/heapster/events/sinks/kafka"
 	"k8s.io/heapster/events/sinks/log"
@@ -33,6 +34,7 @@ type SinkFactory struct {
 }
 
 func (this *SinkFactory) Build(uri flags.Uri) (core.EventSink, error) {
+	fmt.Println("BUILDING EVENT SINK")
 	switch uri.Key {
 	case "gcl":
 		return gcl.CreateGCLSink(&uri.Val)
@@ -46,6 +48,8 @@ func (this *SinkFactory) Build(uri flags.Uri) (core.EventSink, error) {
 		return kafka.NewKafkaSink(&uri.Val)
 	case "riemann":
 		return riemann.CreateRiemannSink(&uri.Val)
+	case "honeycomb":
+		return honeycomb.NewHoneycombSink(&uri.Val)
 	default:
 		return nil, fmt.Errorf("Sink not recognized: %s", uri.Key)
 	}
