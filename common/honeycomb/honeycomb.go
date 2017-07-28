@@ -91,16 +91,6 @@ func (c *Client) SendBatch(batch Batch) error {
 	return nil
 }
 
-func (c *Client) SendMessage(data interface{}) error {
-	buf := new(bytes.Buffer)
-	err := json.NewEncoder(buf).Encode(data)
-	if err != nil {
-		return err
-	}
-	err = c.makeRequest(buf)
-	return err
-}
-
 func (c *Client) makeRequest(body io.Reader) error {
 	url, err := url.Parse(c.config.APIHost)
 	if err != nil {
