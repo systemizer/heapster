@@ -1,7 +1,6 @@
 package honeycomb
 
 import (
-	"fmt"
 	"net/url"
 	"sync"
 
@@ -9,6 +8,19 @@ import (
 	honeycomb_common "k8s.io/heapster/common/honeycomb"
 	"k8s.io/heapster/metrics/core"
 )
+
+// These metrics report cumulative values over the lifetime of the process.
+// Heapster also reports gauges (e.g., "cpu/usage_rate"). Cumulative metrics
+// are more confusing than helpful, so let's not send them in the first place.
+var blacklist = map[string]struct{}{
+	"cpu/usage":                {},
+	"memory/major_page_faults": {},
+	"memory/page_faults":       {},
+	"network/rx_errors":        {},
+	"network/rx":               {},
+	"network/tx_errors":        {},
+	"network/tx":               {},
+}
 
 type honeycombSink struct {
 	client *honeycomb_common.Client
@@ -31,10 +43,13 @@ func (sink *honeycombSink) ExportData(dataBatch *core.DataBatch) {
 	for _, metricSet := range dataBatch.MetricSets {
 		data := make(map[string]interface{})
 		for metricName, metricValue := range metricSet.MetricValues {
+			if _, ok := blacklist[metricName]; ok {
+				continue
+			}
 			data[metricName] = metricValue.GetValue()
 		}
 		for k, v := range metricSet.Labels {
-			data[fmt.Sprintf("labels.%s", k)] = v
+			data[k] = v
 		}
 		batch[i] = &honeycomb_common.BatchPoint{
 			Data:      data,
