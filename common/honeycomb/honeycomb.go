@@ -79,6 +79,10 @@ type BatchPoint struct {
 type Batch []*BatchPoint
 
 func (c *Client) SendBatch(batch Batch) error {
+	if len(batch) == 0 {
+		// Nothing to send
+		return nil
+	}
 	buf := new(bytes.Buffer)
 	err := json.NewEncoder(buf).Encode(batch)
 	if err != nil {
