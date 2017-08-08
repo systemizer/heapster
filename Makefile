@@ -1,6 +1,6 @@
 all: build
 
-PREFIX?=honeycombio
+PREFIX?=gcr.io/google_containers
 FLAGS=
 ARCH?=amd64
 ALL_ARCHITECTURES=amd64 arm arm64 ppc64le s390x
@@ -49,7 +49,7 @@ build: clean fmt
 sanitize:
 	hooks/check_boilerplate.sh
 	hooks/check_gofmt.sh
-	hooks/run_vet.sh
+#	hooks/run_vet.sh
 
 test-unit: clean sanitize build
 ifeq ($(ARCH),amd64)

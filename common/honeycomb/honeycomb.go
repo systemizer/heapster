@@ -35,7 +35,7 @@ type config struct {
 	WriteKey string
 }
 
-func buildConfig(uri *url.URL) (*config, error) {
+func BuildConfig(uri *url.URL) (*config, error) {
 	opts := uri.Query()
 
 	config := &config{
@@ -69,7 +69,7 @@ type Client struct {
 }
 
 func NewClient(uri *url.URL) (*Client, error) {
-	config, err := buildConfig(uri)
+	config, err := BuildConfig(uri)
 	if err != nil {
 		return nil, err
 	}
