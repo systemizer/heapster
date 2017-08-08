@@ -1,13 +1,28 @@
+// Copyright 2017 Google Inc. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package honeycomb
 
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
+	"errors"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
 	"path"
 	"time"
 
@@ -22,40 +37,30 @@ type config struct {
 
 func buildConfig(uri *url.URL) (*config, error) {
 	opts := uri.Query()
-	dataset, err := getOpt(opts, "dataset", true)
-	if err != nil {
-		return nil, err
-	}
-	writekey, err := getOpt(opts, "writekey", true)
-	if err != nil {
-		return nil, err
-	}
-	apihost, err := getOpt(opts, "api_host", false)
-	if err != nil {
-		return nil, err
-	}
-	if apihost == "" {
-		apihost = "https://api.honeycomb.io"
-	}
-	config := &config{
-		APIHost:  apihost,
-		WriteKey: writekey,
-		Dataset:  dataset,
-	}
-	return config, err
-}
 
-func getOpt(opts url.Values, key string, required bool) (string, error) {
-	if len(opts[key]) == 0 {
-		if required {
-			return "", fmt.Errorf("Missing required option `%v'", key)
-		} else {
-			return "", nil
-		}
-	} else if len(opts[key]) > 1 {
-		return "", fmt.Errorf("Repeated option `%v'", key)
+	config := &config{
+		WriteKey: os.Getenv("HONEYCOMB_WRITEKEY"),
+		APIHost:  "https://api.honeycomb.io/",
+		Dataset:  "heapster",
 	}
-	return opts[key][0], nil
+
+	if len(opts["writekey"]) >= 1 {
+		config.WriteKey = opts["writekey"][0]
+	}
+
+	if len(opts["apihost"]) >= 1 {
+		config.APIHost = opts["apihost"][0]
+	}
+
+	if len(opts["dataset"]) >= 1 {
+		config.Dataset = opts["dataset"][0]
+	}
+
+	if config.WriteKey == "" {
+		return nil, errors.New("Failed to find honeycomb API write key")
+	}
+
+	return config, nil
 }
 
 type Client struct {
