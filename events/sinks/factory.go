@@ -34,7 +34,6 @@ type SinkFactory struct {
 }
 
 func (this *SinkFactory) Build(uri flags.Uri) (core.EventSink, error) {
-	fmt.Println("BUILDING EVENT SINK")
 	switch uri.Key {
 	case "gcl":
 		return gcl.CreateGCLSink(&uri.Val)

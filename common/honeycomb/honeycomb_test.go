@@ -45,11 +45,11 @@ func TestHoneycombClientWrite(t *testing.T) {
 
 	assert.NoError(t, err)
 
-	client := NewClient(*config)
+	client, _ := NewClient(stubURL)
 
-	err = client.SendBatch([]BatchPoint{
+	err = client.SendBatch([]*BatchPoint{
 		{
-			Data:      {"hello": "world"},
+			Data:      "test",
 			Timestamp: time.Now(),
 		},
 	})
