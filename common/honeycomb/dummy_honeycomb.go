@@ -19,21 +19,19 @@ type BatchPointsSavedToHoneycomb struct {
 }
 
 type FakeHoneycombClient struct {
-	BatchPoints []BatchPointsSavedToHoneycomb
+	BatchPoints []*BatchPoint
 }
 
 func NewFakeHoneycombClient() *FakeHoneycombClient {
-	return &FakeHoneycombClient{[]BatchPointsSavedToHoneycomb{}}
+	return &FakeHoneycombClient{[]*BatchPoint{}}
 }
 
 func (client *FakeHoneycombClient) SendBatch(batch Batch) error {
 	for _, batchpoint := range batch {
-		client.BatchPoints = append(client.BatchPoints, BatchPointsSavedToHoneycomb{batchpoint})
+		client.BatchPoints = append(client.BatchPoints, batchpoint)
 	}
 	return nil
 }
-
-var FakeClient = NewFakeHoneycombClient()
 
 var Config = config{
 	Dataset:  "fake",

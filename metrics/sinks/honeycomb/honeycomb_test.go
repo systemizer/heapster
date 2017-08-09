@@ -29,18 +29,20 @@ type fakeHoneycombDataSink struct {
 	fakeDbClient *honeycomb_common.FakeHoneycombClient
 }
 
-func newRawHoneycombSink() *honeycombSink {
+func newRawHoneycombSink(client honeycomb_common.Client) *honeycombSink {
 	return &honeycombSink{
-		client: honeycomb_common.FakeClient,
+		client: client,
 	}
 }
 
 func NewFakeSink() fakeHoneycombDataSink {
+	fakeClient := honeycomb_common.NewFakeHoneycombClient()
 	return fakeHoneycombDataSink{
-		newRawHoneycombSink(),
-		honeycomb_common.FakeClient,
+		newRawHoneycombSink(fakeClient),
+		fakeClient,
 	}
 }
+
 func TestStoreDataEmptyInput(t *testing.T) {
 	fakeSink := NewFakeSink()
 	dataBatch := core.DataBatch{}

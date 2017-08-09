@@ -33,11 +33,12 @@ type fakeHoneycombEventSink struct {
 }
 
 func NewFakeSink() fakeHoneycombEventSink {
+	fakeClient := honeycomb_common.NewFakeHoneycombClient()
 	return fakeHoneycombEventSink{
 		&honeycombSink{
-			client: honeycomb_common.FakeClient,
+			client: fakeClient,
 		},
-		honeycomb_common.FakeClient,
+		fakeClient,
 	}
 }
 
