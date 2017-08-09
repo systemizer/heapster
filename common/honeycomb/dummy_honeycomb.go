@@ -14,10 +14,6 @@
 
 package honeycomb
 
-type BatchPointsSavedToHoneycomb struct {
-	BatchPoint *BatchPoint
-}
-
 type FakeHoneycombClient struct {
 	BatchPoints []*BatchPoint
 }
