@@ -67,11 +67,11 @@ func (sink *honeycombSink) ExportEvents(eventBatch *event_core.EventBatch) {
 			Data:      data,
 			Timestamp: event.LastTimestamp.UTC(),
 		}
-		err := sink.client.SendBatch(exportedBatch)
-		if err != nil {
-			glog.Warningf("Failed to send event: %v", err)
-			return
-		}
+	}
+	err := sink.client.SendBatch(exportedBatch)
+	if err != nil {
+		glog.Warningf("Failed to send event: %v", err)
+		return
 	}
 }
 
