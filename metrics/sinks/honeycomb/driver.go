@@ -37,7 +37,7 @@ var blacklist = map[string]struct{}{
 }
 
 type honeycombSink struct {
-	client *honeycomb_common.Client
+	client honeycomb_common.Client
 	sync.Mutex
 }
 

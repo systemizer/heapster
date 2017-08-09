@@ -32,7 +32,6 @@ type fakeHoneycombDataSink struct {
 func newRawHoneycombSink() *honeycombSink {
 	return &honeycombSink{
 		client: honeycomb_common.FakeClient,
-		c:      honeycomb_common.Config,
 	}
 }
 
@@ -46,7 +45,7 @@ func TestStoreDataEmptyInput(t *testing.T) {
 	fakeSink := NewFakeSink()
 	dataBatch := core.DataBatch{}
 	fakeSink.ExportData(&dataBatch)
-	assert.Equal(t, 0, len(fakeSink.fakeDbClient.Measurements))
+	assert.Equal(t, 0, len(fakeSink.fakeDbClient.BatchPoints))
 }
 
 func TestStoreMultipleDataInput(t *testing.T) {

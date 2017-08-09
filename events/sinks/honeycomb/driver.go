@@ -25,7 +25,7 @@ import (
 )
 
 type honeycombSink struct {
-	client *honeycomb_common.Client
+	client honeycomb_common.Client
 	sync.Mutex
 }
 

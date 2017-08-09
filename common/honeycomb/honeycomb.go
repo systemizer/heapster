@@ -63,17 +63,21 @@ func BuildConfig(uri *url.URL) (*config, error) {
 	return config, nil
 }
 
-type Client struct {
+type Client interface {
+	SendBatch(batch Batch) error
+}
+
+type HoneycombClient struct {
 	config     config
 	httpClient http.Client
 }
 
-func NewClient(uri *url.URL) (*Client, error) {
+func NewClient(uri *url.URL) (*HoneycombClient, error) {
 	config, err := BuildConfig(uri)
 	if err != nil {
 		return nil, err
 	}
-	return &Client{config: *config}, nil
+	return &HoneycombClient{config: *config}, nil
 }
 
 type BatchPoint struct {
@@ -83,7 +87,7 @@ type BatchPoint struct {
 
 type Batch []*BatchPoint
 
-func (c *Client) SendBatch(batch Batch) error {
+func (c *HoneycombClient) SendBatch(batch Batch) error {
 	if len(batch) == 0 {
 		// Nothing to send
 		return nil
@@ -100,7 +104,7 @@ func (c *Client) SendBatch(batch Batch) error {
 	return nil
 }
 
-func (c *Client) makeRequest(body io.Reader) error {
+func (c *HoneycombClient) makeRequest(body io.Reader) error {
 	url, err := url.Parse(c.config.APIHost)
 	if err != nil {
 		return err
